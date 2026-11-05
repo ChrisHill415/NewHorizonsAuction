@@ -4,7 +4,7 @@
 
 ```bash
 git clone https://github.com/ChrisHill415/NewHorizonsAuction.git
-cd NewHorizonsAuction
+cd NewHorizonsAuction/newhorizons
 ```
 
 ### 2. Install dependencies
