@@ -22,7 +22,7 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-Ask a team member for the correct Supabase values.
+Send when created.
 
 ### 4. Run the development server
 
