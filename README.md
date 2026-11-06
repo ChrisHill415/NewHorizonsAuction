@@ -24,13 +24,8 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
 
 Located in Supabase when you go to project and click connect in top left.
 
-### 5. Connect Supabase
 
-```bash
-npm install @supabase/supabase-js
-```
-
-### 5. Run the development server
+### 4. Run the development server
 
 ```bash
 npm run dev
@@ -42,7 +37,7 @@ Open:
 http://localhost:3000
 ```
 
-### 6. Before starting work
+### 5. Before starting work
 
 Update your local `main` branch:
 
