@@ -22,9 +22,15 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-Send private info to team when created with Supabase.
+Located in Supabase when you go to project and click connect in top left.
 
-### 4. Run the development server
+### 5. Connect Supabase
+
+```bash
+npm install @supabase/supabase-js
+```
+
+### 5. Run the development server
 
 ```bash
 npm run dev
@@ -36,7 +42,7 @@ Open:
 http://localhost:3000
 ```
 
-### 5. Before starting work
+### 6. Before starting work
 
 Update your local `main` branch:
 
