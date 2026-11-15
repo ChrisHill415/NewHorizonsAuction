@@ -58,6 +58,7 @@ export function BidderAccount({ mode }: { mode: Mode }) {
         setNotice({ kind: "error", text: authError(error, "We couldn’t complete your request. Check your connection and try again.") });
         return;
       }
+      setEmail("");
       setPassword("");
       setConfirmation("");
       if (registering) {
