@@ -66,8 +66,6 @@ export function BidderAuthProvider({ children }: { children: React.ReactNode }) 
         setNotice({ kind: "error", text: data.session
           ? "We couldn’t sign you out. Please try again."
           : "You’re signed out of this browser, but we couldn’t finish signing out with the server." });
-      } else {
-        setNotice({ kind: "success", text: "You’ve been signed out. See you next time!" });
       }
     } catch {
       setNotice({ kind: "error", text: "We couldn’t finish signing you out. Check your connection and try again." });

@@ -60,9 +60,11 @@ export function BidderAccount({ mode }: { mode: Mode }) {
       }
       setPassword("");
       setConfirmation("");
-      setAuthNotice({ kind: "success", text: data.session
-        ? (registering ? "Your bidder account is ready. You’re signed in." : "You’re signed in. Welcome back!")
-        : "Check your inbox for an email confirmation link before signing in to bid. You can browse the catalog while you wait. If you already have an account, sign in instead." });
+      if (registering) {
+        setAuthNotice({ kind: "success", text: data.session
+          ? "Your bidder account is ready. You’re signed in."
+          : "Check your inbox for an email confirmation link before signing in to bid. You can browse the catalog while you wait. If you already have an account, sign in instead." });
+      }
       router.replace("/");
     } catch {
       setNotice({ kind: "error", text: "We couldn’t connect. Check your connection and try again." });

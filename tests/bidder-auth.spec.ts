@@ -57,7 +57,7 @@ test("sign-in opens the catalog, survives reload, and top-right logout updates a
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(page.getByRole("button", { name: "Please wait…" })).toBeDisabled();
   await expect(page).toHaveURL("http://127.0.0.1:3100/");
-  await expect(page.getByRole("status")).toContainText("You’re signed in");
+  await expect(page.locator(".auth-feedback")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Stallion Breeding Package" })).toBeVisible();
   await expect(page.locator(".account-main")).toBeHidden();
   await expect(page.getByRole("navigation").getByRole("link", { name: "Catalog" })).toBeVisible();
@@ -69,7 +69,8 @@ test("sign-in opens the catalog, survives reload, and top-right logout updates a
   await expect(otherTab).toHaveURL("http://127.0.0.1:3100/");
   await expect(otherTab.getByRole("button", { name: "Log out" })).toBeVisible();
   await page.getByRole("button", { name: "Log out" }).click();
-  await expect(page.getByRole("status")).toContainText("You’ve been signed out");
+  await expect(page.getByRole("navigation").getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
+  await expect(page.locator(".auth-feedback")).toHaveCount(0);
   await expect(otherTab.getByRole("navigation").getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
   expect(new URL(requests.find((r) => r.url().includes("/logout"))!.url()).searchParams.get("scope")).toBe("local");
   await page.reload();
