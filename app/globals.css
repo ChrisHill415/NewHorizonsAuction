@@ -1,26 +1,145 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fff;
+  --foreground: #252525;
+  --accent: #78a5c7;
+  --muted: #737373;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-mono: ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
+  margin: 0;
+  min-height: 100vh;
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+button, .account-card input { font: inherit; }
+button, a, .account-card input { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+.skip-link { position: fixed; top: 10px; left: 10px; z-index: 10; transform: translateY(-160%); padding: 12px 18px; background: white; color: #222; }
+.skip-link:focus { transform: translateY(0); }
+
+/* The reference's black masthead, stacked wordmark, and spaced navigation. */
+.site-header { max-width: 1280px; margin: 0 auto; background: #050505; color: #fff; }
+.site-header-inner { min-height: 130px; padding: 30px 44px; display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+.brand { display: inline-block; flex-shrink: 0; text-decoration: none; }
+.wordmark { display: inline-flex; flex-direction: column; color: #fff; }
+.wordmark-name { font: 25px/.95 Georgia, "Times New Roman", serif; letter-spacing: -1.2px; text-transform: uppercase; }
+.wordmark-auction { font-size: 40px; line-height: 1; letter-spacing: 2.5px; font-weight: 900; }
+.wordmark-dot { color: var(--accent); }
+.site-header nav { display: flex; align-items: center; gap: 32px; }
+.nav-link, .nav-status { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; line-height: 1.5; }
+.nav-link { color: #e4e4e4; transition: color .15s; }
+.nav-link:hover, .nav-link[aria-current="page"] { color: #80b9df; }
+.nav-status { color: #aaa; letter-spacing: 1px; }
+
+.page-heading { text-align: center; margin: 59px 24px 54px; }
+.page-heading > p { margin: 0 0 15px; font-size: 43px; line-height: 1.15; font-weight: 750; text-transform: uppercase; letter-spacing: .4px; }
+.page-heading > span { color: #777; font-size: 10px; line-height: 1.7; letter-spacing: 3px; }
+.account-main { width: min(1100px, 100%); margin: 0 auto 88px; padding: 0 30px; display: grid; grid-template-columns: 1.08fr 1fr; align-items: start; gap: 68px; }
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2.4px; line-height: 1.8; }
+
+/* A quiet version of the reference's equestrian hero beside the account form. */
+.auction-intro { position: relative; display: flex; align-items: flex-end; min-height: 560px; overflow: hidden; color: #fff; background: #171614; }
+.auction-photo { position: absolute; inset: 0; background-image: linear-gradient(180deg, #00000005 15%, #00000024 38%, #000000e8 92%), url("/images/auction-horse.jpeg"); background-size: cover; background-position: 88% center; }
+.intro-content { position: relative; padding: 38px; }
+.intro-content .eyebrow { color: #b7d4e8; }
+.intro-content h2 { font-size: 35px; font-weight: 400; line-height: 1.16; letter-spacing: -1.2px; margin: 17px 0 20px; }
+.intro-content > p { max-width: 310px; font-size: 14px; color: #e3e3e3; line-height: 1.8; margin: 0; }
+.intro-rule { width: 42px; height: 2px; background: var(--accent); margin: 27px 0 18px; }
+.intro-note { color: #c6c6c6; font-size: 11px; line-height: 1.7; }
+
+.account-card { width: 100%; padding: 30px 28px 25px; border: 1px solid #ddd; border-radius: 3px; background: #fff; }
+.account-card .eyebrow { color: #757575; margin: 0 0 9px; font-size: 9px; letter-spacing: 2px; }
+.account-card h1 { font-size: 29px; line-height: 1.2; font-weight: 750; text-transform: uppercase; letter-spacing: 1.2px; margin: 0 0 15px; }
+.card-intro { font-size: 13px; color: #707070; line-height: 1.8; margin: 0 0 24px; }
+.account-card fieldset { padding: 0; margin: 0; border: 0; min-width: 0; }
+.account-card label, .account-card .field-label { display: block; color: #303030; font-size: 12px; font-weight: 600; margin-bottom: 9px; }
+.account-card input { width: 100%; min-height: 44px; border: 1px solid #c7c7c7; border-radius: 2px; color: #222; background: #fff; padding: 10px 12px; margin-bottom: 20px; font-size: 14px; transition: border-color .15s; }
+.account-card input:hover:not(:disabled) { border-color: #777; }
+.account-card input:disabled { background: #fafafa; color: #777; }
+.account-card input::placeholder { color: #929292; }
+.field-hint { margin: -12px 0 20px; color: #737373; font-size: 11px; line-height: 1.6; }
+.button { border: 1px solid #222; cursor: pointer; background: #222; color: #fff; min-height: 45px; border-radius: 28px; padding: 13px 23px; display: inline-flex; align-items: center; justify-content: center; gap: 16px; text-decoration: none; font-size: 11px; letter-spacing: 1px; font-weight: 700; transition: background .15s, border-color .15s; }
+.button:hover { background: #3c637f; border-color: #3c637f; }
+.button-full { width: 100%; }
+.button-secondary { color: #333; background: #fff; border-color: #c7c7c7; }
+.button-secondary:hover { background: #f0f6fa; border-color: #78a5c7; }
+button:disabled, fieldset:disabled .button { cursor: not-allowed; opacity: .5; }
+.welcome-actions { display: grid; gap: 13px; }
+.notice { padding: 12px 13px; border-radius: 2px; font-size: 12px; line-height: 1.7; margin: 0 0 22px; overflow-wrap: anywhere; }
+.notice-error { background: #fff8f5; color: #8f402c; border: 1px solid #ebd7cf; }
+.notice-success { background: #f0f6f9; color: #31546c; border: 1px solid #c8dce9; }
+.form-switch { font-size: 12px; text-align: center; color: #737373; margin: 23px 0 0; line-height: 1.8; }
+.form-switch a { font-weight: 600; color: #385f7c; margin-left: 4px; text-underline-offset: 3px; }
+.confirmation-help { border-top: 1px solid #ececec; padding-top: 18px; margin-top: 22px; text-align: center; color: #737373; font-size: 11px; line-height: 1.7; }
+.confirmation-help p { margin: 0 0 5px; }
+.text-button { background: none; border: 0; padding: 4px; font-size: 12px; color: #385f7c; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.text-button:hover { color: #222; }
+.card-footnote { border-top: 1px solid #ececec; padding-top: 20px; margin: 24px 0 0; text-align: center; color: #777; font-size: 10px; line-height: 1.7; }
+.muted { color: #737373; font-size: 13px; }
+.status-badge { display: inline-block; padding: 7px 11px; background: #eef5f9; color: #315c79; font-size: 11px; border-radius: 3px; margin-bottom: 22px; }
+.status-badge span { font-size: 8px; margin-right: 5px; }
+.account-email { display: block; font-size: 16px; font-weight: 400; margin: 7px 0 26px; overflow-wrap: anywhere; }
+
+
+@media (max-width: 1000px) {
+  .site-header-inner { padding: 26px 32px; min-height: 115px; }
+  .site-header nav { gap: 22px; }
+  .account-main { gap: 34px; }
+  .intro-content { padding: 30px; }
+  .intro-content h2 { font-size: 31px; }
+}
+@media (max-width: 700px) {
+  .site-header-inner { min-height: 104px; padding: 24px; gap: 24px; }
+  .wordmark-name { font-size: 20px; }
+  .wordmark-auction { font-size: 31px; }
+  .site-header nav { gap: 18px; }
+  .nav-link, .nav-status { font-size: 10px; letter-spacing: 1px; }
+  .page-heading { margin: 38px 24px 32px; }
+  .page-heading > p { font-size: 34px; }
+  .page-heading > span { font-size: 8px; letter-spacing: 1.8px; }
+  .account-main { display: flex; flex-direction: column; gap: 28px; padding: 0 24px; max-width: 510px; margin-bottom: 48px; }
+  .account-card { order: -1; padding: 27px 24px; }
+  .account-card h1 { font-size: 26px; }
+  .account-card input { font-size: 16px; }
+  .auction-intro { width: 100%; min-height: 320px; }
+  .auction-photo { background-position: 85% 42%; }
+  .intro-content { padding: 27px; }
+  .intro-content h2 { font-size: 29px; }
+  .intro-content > p { font-size: 12px; }
+  .intro-rule { margin: 22px 0 14px; }
+}
+@media (max-width: 400px) {
+  .site-header-inner { padding: 22px 20px; gap: 15px; }
+  .wordmark-name { font-size: 17px; }
+  .wordmark-auction { font-size: 27px; letter-spacing: 2px; }
+  .site-header nav { gap: 13px; }
+  .nav-link { font-size: 9px; letter-spacing: .8px; }
+  .account-main { padding: 0 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
+
+.nav-button { border: 0; background: transparent; padding: 0; cursor: pointer; font-family: inherit; }
+.nav-button:disabled { opacity: .55; cursor: wait; }
+.auth-feedback { max-width: 1132px; margin: 20px auto; padding: 0 24px; display: flex; align-items: center; gap: 16px; }
+.auth-feedback .notice { flex: 1; margin: 0; }
+@media (max-width: 400px) {
+  .site-header-inner { flex-wrap: wrap; justify-content: center; gap: 20px; }
+  .site-header nav { width: 100%; justify-content: center; }
 }
