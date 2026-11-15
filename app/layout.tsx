@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import "./globals.css";
 import { BidderAuthProvider } from "./components/bidder-auth-provider";
 import { SiteHeader } from "./components/site-header";
-import { AuctionWordmark } from "./components/auction-wordmark";
 
 export const metadata: Metadata = {
   title: "New Horizons Auction",
@@ -36,14 +34,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               {children}
             </div>
           </main>
-          <footer className="site-footer" id="our-purpose">
-            <div className="footer-content">
-              <div className="footer-brand"><AuctionWordmark /><span>Good people. Lasting impact.</span></div>
-              <div className="footer-mission"><h2>Why we bid</h2><p>Supporting New Horizons and its work helping children and families. Every donor and bidder is part of something bigger.</p></div>
-              <div className="footer-start"><h2>Be part of the good</h2><p>One community. One shared purpose.</p><Link href="/register">Create your bidder account <span aria-hidden="true">→</span></Link></div>
-            </div>
-            <div className="footer-bottom"><span>New Horizons Auction</span><span>Made for our community.</span></div>
-          </footer>
         </BidderAuthProvider>
       </body>
     </html>

@@ -94,16 +94,6 @@ button:disabled, fieldset:disabled .button { cursor: not-allowed; opacity: .5; }
 .status-badge span { font-size: 8px; margin-right: 5px; }
 .account-email { display: block; font-size: 16px; font-weight: 400; margin: 7px 0 26px; overflow-wrap: anywhere; }
 
-.site-footer { background: #050505; color: #a5a5a5; }
-.footer-content { max-width: 1192px; padding: 48px 30px 45px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 60px; }
-.footer-brand > span:last-child { display: block; font-size: 11px; color: #aaa; margin-top: 16px; line-height: 1.8; }
-.footer-brand .wordmark-name { font-size: 23px; }
-.footer-brand .wordmark-auction { font-size: 36px; }
-.site-footer h2 { color: #fff; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin: 3px 0 20px; font-weight: 650; }
-.site-footer p { font-size: 12px; line-height: 1.9; margin: 0; }
-.footer-start a { display: inline-block; font-size: 11px; color: #b9d5e9; margin-top: 16px; text-underline-offset: 5px; line-height: 1.8; }
-.footer-start a span { margin-left: 8px; }
-.footer-bottom { max-width: 1132px; padding: 20px 0 24px; margin: 0 auto; border-top: 1px solid #242424; font-size: 10px; color: #8b8b8b; display: flex; justify-content: space-between; gap: 20px; }
 
 @media (max-width: 1000px) {
   .site-header-inner { padding: 26px 32px; min-height: 115px; }
@@ -111,8 +101,6 @@ button:disabled, fieldset:disabled .button { cursor: not-allowed; opacity: .5; }
   .account-main { gap: 34px; }
   .intro-content { padding: 30px; }
   .intro-content h2 { font-size: 31px; }
-  .footer-content { gap: 35px; }
-  .footer-bottom { margin: 0 30px; }
 }
 @media (max-width: 700px) {
   .site-header-inner { min-height: 104px; padding: 24px; gap: 24px; }
@@ -133,9 +121,6 @@ button:disabled, fieldset:disabled .button { cursor: not-allowed; opacity: .5; }
   .intro-content h2 { font-size: 29px; }
   .intro-content > p { font-size: 12px; }
   .intro-rule { margin: 22px 0 14px; }
-  .footer-content { padding: 38px 24px; grid-template-columns: 1fr; gap: 30px; }
-  .site-footer h2 { margin-bottom: 13px; }
-  .footer-bottom { margin: 0 24px; padding: 20px 0; font-size: 9px; }
 }
 @media (max-width: 400px) {
   .site-header-inner { padding: 22px 20px; gap: 15px; }
