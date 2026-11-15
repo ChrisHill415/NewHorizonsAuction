@@ -25,8 +25,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; }
-button, input { font: inherit; }
-button, a, input { -webkit-tap-highlight-color: transparent; }
+button, .account-card input { font: inherit; }
+button, a, .account-card input { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 .skip-link { position: fixed; top: 10px; left: 10px; z-index: 10; transform: translateY(-160%); padding: 12px 18px; background: white; color: #222; }
 .skip-link:focus { transform: translateY(0); }
@@ -39,7 +39,7 @@ button, a, input { -webkit-tap-highlight-color: transparent; }
 .wordmark-name { font: 25px/.95 Georgia, "Times New Roman", serif; letter-spacing: -1.2px; text-transform: uppercase; }
 .wordmark-auction { font-size: 40px; line-height: 1; letter-spacing: 2.5px; font-weight: 900; }
 .wordmark-dot { color: var(--accent); }
-nav { display: flex; align-items: center; gap: 32px; }
+.site-header nav { display: flex; align-items: center; gap: 32px; }
 .nav-link, .nav-status { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; line-height: 1.5; }
 .nav-link { color: #e4e4e4; transition: color .15s; }
 .nav-link:hover, .nav-link[aria-current="page"] { color: #80b9df; }
@@ -63,14 +63,14 @@ nav { display: flex; align-items: center; gap: 32px; }
 
 .account-card { width: 100%; padding: 30px 28px 25px; border: 1px solid #ddd; border-radius: 3px; background: #fff; }
 .account-card .eyebrow { color: #757575; margin: 0 0 9px; font-size: 9px; letter-spacing: 2px; }
-h1 { font-size: 29px; line-height: 1.2; font-weight: 750; text-transform: uppercase; letter-spacing: 1.2px; margin: 0 0 15px; }
+.account-card h1 { font-size: 29px; line-height: 1.2; font-weight: 750; text-transform: uppercase; letter-spacing: 1.2px; margin: 0 0 15px; }
 .card-intro { font-size: 13px; color: #707070; line-height: 1.8; margin: 0 0 24px; }
-fieldset { padding: 0; margin: 0; border: 0; min-width: 0; }
-label, .field-label { display: block; color: #303030; font-size: 12px; font-weight: 600; margin-bottom: 9px; }
-input { width: 100%; min-height: 44px; border: 1px solid #c7c7c7; border-radius: 2px; color: #222; background: #fff; padding: 10px 12px; margin-bottom: 20px; font-size: 14px; transition: border-color .15s; }
-input:hover:not(:disabled) { border-color: #777; }
-input:disabled { background: #fafafa; color: #777; }
-input::placeholder { color: #929292; }
+.account-card fieldset { padding: 0; margin: 0; border: 0; min-width: 0; }
+.account-card label, .account-card .field-label { display: block; color: #303030; font-size: 12px; font-weight: 600; margin-bottom: 9px; }
+.account-card input { width: 100%; min-height: 44px; border: 1px solid #c7c7c7; border-radius: 2px; color: #222; background: #fff; padding: 10px 12px; margin-bottom: 20px; font-size: 14px; transition: border-color .15s; }
+.account-card input:hover:not(:disabled) { border-color: #777; }
+.account-card input:disabled { background: #fafafa; color: #777; }
+.account-card input::placeholder { color: #929292; }
 .field-hint { margin: -12px 0 20px; color: #737373; font-size: 11px; line-height: 1.6; }
 .button { border: 1px solid #222; cursor: pointer; background: #222; color: #fff; min-height: 45px; border-radius: 28px; padding: 13px 23px; display: inline-flex; align-items: center; justify-content: center; gap: 16px; text-decoration: none; font-size: 11px; letter-spacing: 1px; font-weight: 700; transition: background .15s, border-color .15s; }
 .button:hover { background: #3c637f; border-color: #3c637f; }
@@ -97,7 +97,7 @@ button:disabled, fieldset:disabled .button { cursor: not-allowed; opacity: .5; }
 
 @media (max-width: 1000px) {
   .site-header-inner { padding: 26px 32px; min-height: 115px; }
-  nav { gap: 22px; }
+  .site-header nav { gap: 22px; }
   .account-main { gap: 34px; }
   .intro-content { padding: 30px; }
   .intro-content h2 { font-size: 31px; }
@@ -106,15 +106,15 @@ button:disabled, fieldset:disabled .button { cursor: not-allowed; opacity: .5; }
   .site-header-inner { min-height: 104px; padding: 24px; gap: 24px; }
   .wordmark-name { font-size: 20px; }
   .wordmark-auction { font-size: 31px; }
-  nav { gap: 18px; }
+  .site-header nav { gap: 18px; }
   .nav-link, .nav-status { font-size: 10px; letter-spacing: 1px; }
   .page-heading { margin: 38px 24px 32px; }
   .page-heading > p { font-size: 34px; }
   .page-heading > span { font-size: 8px; letter-spacing: 1.8px; }
   .account-main { display: flex; flex-direction: column; gap: 28px; padding: 0 24px; max-width: 510px; margin-bottom: 48px; }
   .account-card { order: -1; padding: 27px 24px; }
-  h1 { font-size: 26px; }
-  input { font-size: 16px; }
+  .account-card h1 { font-size: 26px; }
+  .account-card input { font-size: 16px; }
   .auction-intro { width: 100%; min-height: 320px; }
   .auction-photo { background-position: 85% 42%; }
   .intro-content { padding: 27px; }
@@ -126,11 +126,20 @@ button:disabled, fieldset:disabled .button { cursor: not-allowed; opacity: .5; }
   .site-header-inner { padding: 22px 20px; gap: 15px; }
   .wordmark-name { font-size: 17px; }
   .wordmark-auction { font-size: 27px; letter-spacing: 2px; }
-  nav { gap: 13px; }
+  .site-header nav { gap: 13px; }
   .nav-link { font-size: 9px; letter-spacing: .8px; }
   .account-main { padding: 0 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { transition: none !important; }
+}
+
+.nav-button { border: 0; background: transparent; padding: 0; cursor: pointer; font-family: inherit; }
+.nav-button:disabled { opacity: .55; cursor: wait; }
+.auth-feedback { max-width: 1132px; margin: 20px auto; padding: 0 24px; display: flex; align-items: center; gap: 16px; }
+.auth-feedback .notice { flex: 1; margin: 0; }
+@media (max-width: 400px) {
+  .site-header-inner { flex-wrap: wrap; justify-content: center; gap: 20px; }
+  .site-header nav { width: 100%; justify-content: center; }
 }

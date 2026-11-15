@@ -49,28 +49,32 @@ async function signIn(page: Page) {
   await expect(page.getByRole("button", { name: "Log out", exact: true })).toBeVisible();
 }
 
-test("sign-in persists across navigation and reload, and logout updates another tab", async ({ page }) => {
+test("sign-in opens the catalog, survives reload, and top-right logout updates another tab", async ({ page }) => {
   const { mock, requests } = await mockAuth(page);
   mock.delayToken = true;
   await page.goto("/login");
   await enterCredentials(page);
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(page.getByRole("button", { name: "Please wait…" })).toBeDisabled();
-  await expect(page.getByRole("status")).toContainText("You’re signed in");
-  await expect(page.getByText(user.email, { exact: true })).toBeVisible();
-  await page.getByRole("link", { name: "My account" }).click();
   await expect(page).toHaveURL("http://127.0.0.1:3100/");
+  await expect(page.getByRole("status")).toContainText("You’re signed in");
+  await expect(page.getByRole("heading", { name: "Stallion Breeding Package" })).toBeVisible();
+  await expect(page.locator(".account-main")).toBeHidden();
+  await expect(page.getByRole("navigation").getByRole("link", { name: "Catalog" })).toBeVisible();
+  await expect(page.getByRole("navigation").getByRole("button", { name: "Log out" })).toBeVisible();
   await page.reload();
   await expect(page.getByRole("button", { name: "Log out" })).toBeVisible();
   const otherTab = await page.context().newPage();
   await otherTab.goto("/login");
+  await expect(otherTab).toHaveURL("http://127.0.0.1:3100/");
   await expect(otherTab.getByRole("button", { name: "Log out" })).toBeVisible();
   await page.getByRole("button", { name: "Log out" }).click();
   await expect(page.getByRole("status")).toContainText("You’ve been signed out");
-  await expect(otherTab.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+  await expect(otherTab.getByRole("navigation").getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
   expect(new URL(requests.find((r) => r.url().includes("/logout"))!.url()).searchParams.get("scope")).toBe("local");
   await page.reload();
-  await expect(page.getByRole("link", { name: "Create bidder account" })).toBeVisible();
+  await expect(page.getByRole("navigation").getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Horse Grooming Kit" })).toBeVisible();
 });
 
 test("registration checks matching passwords and explains email confirmation", async ({ page }) => {
@@ -85,7 +89,8 @@ test("registration checks matching passwords and explains email confirmation", a
   await page.getByRole("button", { name: "Create bidder account" }).click();
   await expect(page.getByRole("status")).toContainText("Check your inbox");
   await expect(page.getByRole("button", { name: "Log out" })).not.toBeVisible();
-  await expect(page.getByLabel("Password", { exact: true })).toHaveValue("");
+  await expect(page).toHaveURL("http://127.0.0.1:3100/");
+  await expect(page.getByRole("heading", { name: "Western Leather Saddle" })).toBeVisible();
   const request = requests.find((r) => r.url().includes("/signup"))!;
   expect(request.postDataJSON().email).toBe(user.email);
   expect(new URL(request.url()).searchParams.get("redirect_to")).toBe("http://127.0.0.1:3100/login");
@@ -98,6 +103,7 @@ test("registration supports projects with email confirmation disabled", async ({
   await enterCredentials(page);
   await page.getByLabel("Confirm password").fill("Local-bidder-123!");
   await page.getByRole("button", { name: "Create bidder account" }).click();
+  await expect(page).toHaveURL("http://127.0.0.1:3100/");
   await expect(page.getByRole("status")).toContainText("Your bidder account is ready");
   await expect(page.getByRole("button", { name: "Log out" })).toBeVisible();
 });
@@ -125,10 +131,10 @@ test("logout clears this browser even when server revocation fails", async ({ pa
   await signIn(page);
   mock.logoutError = true;
   await page.getByRole("button", { name: "Log out" }).click();
-  await expect(page.locator(".account-card").getByRole("alert")).toContainText("signed out of this browser");
-  await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+  await expect(page.locator(".auth-feedback").getByRole("alert")).toContainText("signed out of this browser");
+  await expect(page.getByRole("navigation").getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
   await page.reload();
-  await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+  await expect(page.getByRole("navigation").getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
 });
 
 test("confirmation email can be resent without claiming the account exists", async ({ page }) => {
@@ -162,8 +168,8 @@ test("a valid confirmation link restores the bidder and removes URL tokens", asy
   await mockAuth(page);
   await page.goto(`/login#access_token=${token}&refresh_token=test-refresh&expires_in=3600&token_type=bearer&type=signup`);
   await expect(page.getByRole("button", { name: "Log out" })).toBeVisible();
-  await expect(page.getByText(user.email, { exact: true })).toBeVisible();
-  await expect.poll(() => new URL(page.url()).hash).toBe("");
+  await expect(page.getByRole("heading", { name: "Stallion Breeding Package" })).toBeVisible();
+  await expect(page).toHaveURL("http://127.0.0.1:3100/");
 });
 
 test("mobile registration fits the viewport and keeps labels available", async ({ page }) => {
@@ -172,4 +178,19 @@ test("mobile registration fits the viewport and keeps labels available", async (
   await page.goto("/register");
   await expect(page.getByLabel("Confirm password")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test("public catalog retains all main-branch items and works on mobile", async ({ page }) => {
+  await mockAuth(page);
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/");
+  await expect(page.locator("article")).toHaveCount(3);
+  await expect(page.getByRole("heading", { name: "New Horizons Auction", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Log out" })).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByRole("link", { name: "Sign in", exact: true }).click();
+  await expect(page).toHaveURL("http://127.0.0.1:3100/login");
+  await page.getByRole("link", { name: "Catalog", exact: true }).click();
+  await expect(page).toHaveURL("http://127.0.0.1:3100/");
+  await expect(page.locator("article")).toHaveCount(3);
 });

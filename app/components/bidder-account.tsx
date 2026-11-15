@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase";
 import { useBidderAuth } from "./bidder-auth-provider";
 
-type Mode = "account" | "login" | "register";
+type Mode = "login" | "register";
 type Notice = { kind: "success" | "error"; text: string };
 
 function authError(error: { code?: string; status?: number }, fallback: string) {
@@ -23,8 +24,9 @@ function authError(error: { code?: string; status?: number }, fallback: string) 
   }
 }
 
-export function BidderAccount({ mode = "account" }: { mode?: Mode }) {
-  const { user, loading, sessionError } = useBidderAuth();
+export function BidderAccount({ mode }: { mode: Mode }) {
+  const { user, loading, sessionError, setNotice: setAuthNotice } = useBidderAuth();
+  const router = useRouter();
   const [notice, setNotice] = useState<Notice | null>(null);
   const [pending, setPending] = useState(false);
   const [email, setEmail] = useState("");
@@ -32,10 +34,16 @@ export function BidderAccount({ mode = "account" }: { mode?: Mode }) {
   const [confirmation, setConfirmation] = useState("");
   const registering = mode === "register";
 
+  // Includes restored sessions and returning email-confirmation links.
+  useEffect(() => {
+    if (!loading && user) router.replace("/");
+  }, [loading, user, router]);
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase || pending) return;
     setNotice(null);
+    setAuthNotice(null);
     if (registering && password !== confirmation) {
       setNotice({ kind: "error", text: "Your passwords don’t match. Please enter the same password in both fields." });
       return;
@@ -52,9 +60,10 @@ export function BidderAccount({ mode = "account" }: { mode?: Mode }) {
       }
       setPassword("");
       setConfirmation("");
-      setNotice({ kind: "success", text: data.session
+      setAuthNotice({ kind: "success", text: data.session
         ? (registering ? "Your bidder account is ready. You’re signed in." : "You’re signed in. Welcome back!")
-        : "Check your inbox for an email confirmation link, then return here to sign in. If you already have an account, you can sign in instead." });
+        : "Check your inbox for an email confirmation link before signing in to bid. You can browse the catalog while you wait. If you already have an account, sign in instead." });
+      router.replace("/");
     } catch {
       setNotice({ kind: "error", text: "We couldn’t connect. Check your connection and try again." });
     } finally {
@@ -78,45 +87,16 @@ export function BidderAccount({ mode = "account" }: { mode?: Mode }) {
     }
   }
 
-  async function logout() {
-    if (!supabase || pending) return;
-    setPending(true);
-    setNotice(null);
-    try {
-      const { error } = await supabase.auth.signOut({ scope: "local" });
-      if (error) {
-        // The SDK removes the local session before contacting the server.
-        const { data } = await supabase.auth.getSession();
-        setNotice({ kind: "error", text: data.session
-          ? "We couldn’t sign you out. Please try again."
-          : "You’re signed out of this browser, but we couldn’t finish signing out with the server." });
-      } else {
-        setNotice({ kind: "success", text: "You’ve been signed out. See you next time!" });
-      }
-    } catch {
-      setNotice({ kind: "error", text: "We couldn’t sign you out. Check your connection and try again." });
-    } finally {
-      setPending(false);
-    }
-  }
-
   const visibleNotice = notice ?? (sessionError ? { kind: "error", text: sessionError } : null);
+  if (user) return <p className="muted" role="status">Opening the catalog…</p>;
   return (
     <section className="account-card" aria-labelledby="account-title" aria-busy={loading || pending}>
-      <p className="eyebrow">{user ? "YOUR BIDDER ACCOUNT" : "WELCOME TO THE COMMUNITY"}</p>
-      <h1 id="account-title">{loading ? "A moment, please." : user ? "Welcome to the auction." : registering ? "Register" : mode === "login" ? "Sign in" : "Your next bid starts here."}</h1>
-      <p className="card-intro">{user ? "You’re signed in to New Horizons Auction." : registering ? "Create your account to join the New Horizons bidding community." : mode === "login" ? "Sign in to your New Horizons bidder account." : "Join the New Horizons community. Create a bidder account or sign in to get started."}</p>
+      <p className="eyebrow">WELCOME TO THE COMMUNITY</p>
+      <h1 id="account-title">{loading ? "A moment, please." : registering ? "Register" : "Sign in"}</h1>
+      <p className="card-intro">{registering ? "Create your account to join the New Horizons bidding community." : "Sign in to your New Horizons bidder account."}</p>
       {visibleNotice && <p className={`notice notice-${visibleNotice.kind}`} role={visibleNotice.kind === "error" ? "alert" : "status"}>{visibleNotice.text}</p>}
       {!supabase && <p className="notice notice-error" role="alert">Account sign-in isn’t available yet. Please try again later.</p>}
-      {loading ? <p className="muted" role="status">Checking your sign-in status…</p> : user ? (
-        <div className="account-details">
-          <span className="status-badge"><span aria-hidden="true">●</span> Signed in</span>
-          <p className="field-label">Email address<span className="account-email">{user.email}</span></p>
-          <button type="button" className="button button-full" onClick={logout} disabled={pending}>{pending ? "Signing out…" : "Log out"}</button>
-        </div>
-      ) : mode === "account" ? (
-        <div className="welcome-actions"><Link className="button button-full" href="/register">Create bidder account <span aria-hidden="true">↗</span></Link><Link className="button button-secondary button-full" href="/login">Sign in</Link></div>
-      ) : (
+      {loading ? <p className="muted" role="status">Checking your sign-in status…</p> : (
         <>
           <form onSubmit={submit}>
             <fieldset disabled={pending || !supabase}>

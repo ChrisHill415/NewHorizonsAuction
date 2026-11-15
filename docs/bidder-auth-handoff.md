@@ -2,7 +2,7 @@
 
 ## Scope and status
 
-The bidder implementation is on `feature/bidder_registration` for review, with the website running on localhost. `main` remains unchanged. Local Supabase connection settings belong in the Git-ignored `.env.local`; only the project URL and publishable key are required. No Supabase dashboard settings, database changes, or production deployment are included. No bid table exists in this checkout.
+The bidder implementation is on `feature/bidder_registration` for review, with the website running on localhost. `main` remains unchanged. Local Supabase connection settings belong in the Git-ignored `.env.local`; only the project URL and publishable key are required. No Supabase dashboard settings, database changes, or production deployment are included. The latest catalog from `main` is preserved at `/` with its sample items. Login and registration use a separate account layout, and successful authentication returns to the catalog. No bid table exists in this checkout.
 
 ## Nov. 14 identity proposal
 
@@ -44,8 +44,8 @@ Choose and record the shared repo, deployment fork, production URL, sync owner, 
 Run locally first. Repeat against the agreed shared deployment when deployment work is authorized.
 
 1. Configure the intended Supabase URL/publishable key and allow the site's exact `/login` redirect. Enable Email auth. Use a test email whose inbox the presenter can access.
-2. Register the test bidder at `/register`. A password mismatch should show an error. If confirmation is enabled, verify the email and follow its link back to `/login`; the page should show the signed-in account. If confirmation is disabled, registration should sign in immediately.
-3. Log out, sign in with the test email/password, and confirm the correct account email is shown. Refresh and navigate home; the account should remain signed in.
+2. Register the test bidder at `/register`. A password mismatch should show an error. If confirmation is enabled, verify the email and follow its link back to `/login`; the page should open the catalog with Log out in the header. Until confirmation, registration opens the catalog with an inbox reminder. If confirmation is disabled, registration should sign in immediately and open the catalog.
+3. Log out, sign in with the test email/password, and confirm that the catalog opens with Catalog and Log out at the top right. Refresh; the account should remain signed in.
 4. Enter an incorrect password and confirm a clear error appears. If needed, resend a confirmation email using the control on `/login`.
 5. Open another tab on the same origin. Log out in one tab; both should show the signed-out UI. Refresh and verify the session stays signed out.
 6. In Supabase Authentication → Users, record the test user's UUID for the bidding owner. When bids exist, verify their `bidder_id` matches this UUID and a second account cannot insert a bid using it.
