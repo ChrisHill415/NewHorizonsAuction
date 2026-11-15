@@ -1,69 +1,152 @@
-import Image from "next/image";
+type Item = {
+  id: string;
+  title: string;
+  description: string;
+  retail_value: number;
+  minimum_bid: number;
+  bid_increment: number;
+  image_urls: string[];
+  donor_url: string | null;
+  status: string;
+  created_at: string;
+};
 
-export default function Home() {
+// Sample rows. Image URLs are placeholder photos from picsum.photos and
+// donor URLs are placeholders. Swap in real ones when you have them.
+const items: Item[] = [
+  {
+    id: "14e0855d-8861-4851-a99e-9722bebab377",
+    title: "Stallion Breeding Package",
+    description: "Sample stallion breeding package.",
+    retail_value: 5000,
+    minimum_bid: 1000,
+    bid_increment: 100,
+    image_urls: [
+      "https://t4.ftcdn.net/jpg/00/22/60/09/360_F_22600957_lcQTgo5jOHqgxXfDtmHv5LtyR1MbdlvE.jpg",
+    ],
+    donor_url: "https://www.google.com/?zx=1794289768880",
+    status: "published",
+    created_at: "2026-11-06 04:12:49.625266+00",
+  },
+  {
+    id: "57ae371f-769e-4a56-bcf3-d88c21b7a435",
+    title: "Horse Grooming Kit",
+    description: "Complete grooming kit with brushes and accessories.",
+    retail_value: 150,
+    minimum_bid: 40,
+    bid_increment: 10,
+    image_urls: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgtoGwVFZ_7cG_Ni8alLqk6n6wpOk6U1rRkJyZDMenCA&s=10"],
+    donor_url: "https://www.google.com/?zx=1794289768880",
+    status: "published",
+    created_at: "2026-11-06 04:12:49.625266+00",
+  },
+  {
+    id: "d98ae80a-9ce7-4e03-9fc2-9b3cfdb746c6",
+    title: "Western Leather Saddle",
+    description: "Handcrafted western saddle with premium leather.",
+    retail_value: 1200,
+    minimum_bid: 300,
+    bid_increment: 25,
+    image_urls: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs5oVbCboYmX5ZDELOW7JrPNUbyA8bfGOGVsr959_nqA&s=10"],
+    donor_url: "https://www.google.com/?zx=1794289768880",
+    status: "published",
+    created_at: "2026-11-06 04:12:49.625266+00",
+  },
+];
+
+const money = (n: number) =>
+  n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+
+function ItemCard({ item }: { item: Item }) {
+  const photo = item.image_urls[0];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <article className="flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white">
+      <div className="aspect-[4/3] w-full bg-slate-200">
+        {photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={photo}
+            alt={item.title}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            className="flex h-full w-full items-center justify-center text-6xl font-semibold text-[#14213d]/25"
+          >
+            {item.title.charAt(0)}
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col gap-3 p-4">
+        <div className="space-y-1">
+          <h2 className="text-lg font-semibold leading-snug text-[#14213d]">
+            {item.title}
+          </h2>
+          <p className="line-clamp-2 text-sm text-slate-600">
+            {item.description}
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="mt-auto space-y-3 border-t border-slate-100 pt-3">
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-xs text-slate-500">Minimum bid</p>
+              <p className="text-xl font-semibold text-[#0f766e]">
+                {money(item.minimum_bid)}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-slate-500">Retail value</p>
+              <p className="text-sm font-medium text-slate-600">
+                {money(item.retail_value)}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between text-sm">
+            <p className="text-slate-600">
+              Bid increment {money(item.bid_increment)}
+            </p>
+            {item.donor_url && (
+              <a
+                href={item.donor_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-[#0f766e] underline underline-offset-2"
+              >
+                About the donor
+              </a>
+            )}
+          </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </article>
+  );
+}
+
+export default function Home() {
+  const published = items.filter((item) => item.status === "published");
+
+  return (
+    <main className="min-h-screen bg-[#eef2f6]">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        <h1 className="text-3xl font-semibold text-[#14213d]">
+          New Horizons Auction
+        </h1>
+        <p className="mb-8 mt-1 text-slate-600">
+          {published.length} {published.length === 1 ? "item" : "items"} open
+          for bidding
+        </p>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {published.map((item) => (
+            <ItemCard key={item.id} item={item} />
+          ))}
+        </div>
+      </div>
+    </main>
   );
 }
