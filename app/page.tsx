@@ -1,3 +1,6 @@
+import { Suspense } from "react";
+import { connection } from "next/server";
+
 type Item = {
   id: string;
   title: string;
@@ -5,60 +8,38 @@ type Item = {
   retail_value: number;
   minimum_bid: number;
   bid_increment: number;
-  image_urls: string[];
+  image_urls: string[] | null;
   donor_url: string | null;
   status: string;
   created_at: string;
 };
 
-// Sample rows. Image URLs are placeholder photos from picsum.photos and
-// donor URLs are placeholders. Swap in real ones when you have them.
-const items: Item[] = [
-  {
-    id: "14e0855d-8861-4851-a99e-9722bebab377",
-    title: "Stallion Breeding Package",
-    description: "Sample stallion breeding package.",
-    retail_value: 5000,
-    minimum_bid: 1000,
-    bid_increment: 100,
-    image_urls: [
-      "https://t4.ftcdn.net/jpg/00/22/60/09/360_F_22600957_lcQTgo5jOHqgxXfDtmHv5LtyR1MbdlvE.jpg",
-    ],
-    donor_url: "https://www.google.com/?zx=1794289768880",
-    status: "published",
-    created_at: "2026-11-06 04:12:49.625266+00",
-  },
-  {
-    id: "57ae371f-769e-4a56-bcf3-d88c21b7a435",
-    title: "Horse Grooming Kit",
-    description: "Complete grooming kit with brushes and accessories.",
-    retail_value: 150,
-    minimum_bid: 40,
-    bid_increment: 10,
-    image_urls: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgtoGwVFZ_7cG_Ni8alLqk6n6wpOk6U1rRkJyZDMenCA&s=10"],
-    donor_url: "https://www.google.com/?zx=1794289768880",
-    status: "published",
-    created_at: "2026-11-06 04:12:49.625266+00",
-  },
-  {
-    id: "d98ae80a-9ce7-4e03-9fc2-9b3cfdb746c6",
-    title: "Western Leather Saddle",
-    description: "Handcrafted western saddle with premium leather.",
-    retail_value: 1200,
-    minimum_bid: 300,
-    bid_increment: 25,
-    image_urls: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs5oVbCboYmX5ZDELOW7JrPNUbyA8bfGOGVsr959_nqA&s=10"],
-    donor_url: "https://www.google.com/?zx=1794289768880",
-    status: "published",
-    created_at: "2026-11-06 04:12:49.625266+00",
-  },
-];
+async function getItems(): Promise<Item[]> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) {
+    throw new Error("Missing Supabase environment variables.");
+  }
+
+  const res = await fetch(
+    `${url}/rest/v1/items?select=*&status=eq.published&order=created_at.desc`,
+    {
+      headers: { apikey: key },
+      cache: "no-store",
+    }
+  );
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(`Supabase request failed (${res.status}): ${detail}`);
+  }
+  return res.json();
+}
 
 const money = (n: number) =>
-  n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+  Number(n).toLocaleString("en-US", { style: "currency", currency: "USD" });
 
 function ItemCard({ item }: { item: Item }) {
-  const photo = item.image_urls[0];
+  const photo = Array.isArray(item.image_urls) ? item.image_urls[0] : undefined;
 
   return (
     <article className="flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white">
@@ -127,25 +108,55 @@ function ItemCard({ item }: { item: Item }) {
   );
 }
 
-export default function Home() {
-  const published = items.filter((item) => item.status === "published");
+async function ItemGrid() {
+  await connection(); // fetch fresh data on every request
+  const items = await getItems();
 
+  if (items.length === 0) {
+    return (
+      <p className="rounded-lg border border-dashed border-slate-300 p-10 text-center text-slate-600">
+        No items yet. Published items will show up here.
+      </p>
+    );
+  }
+
+  return (
+    <>
+      <p className="-mt-6 mb-8 text-slate-600">
+        {items.length} {items.length === 1 ? "item" : "items"} open for bidding
+      </p>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item) => (
+          <ItemCard key={item.id} item={item} />
+        ))}
+      </div>
+    </>
+  );
+}
+
+function GridSkeleton() {
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div
+          key={i}
+          className="h-80 animate-pulse rounded-lg border border-slate-200 bg-white"
+        />
+      ))}
+    </div>
+  );
+}
+
+export default function Home() {
   return (
     <main className="min-h-screen bg-[#eef2f6]">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <h1 className="text-3xl font-semibold text-[#14213d]">
+        <h1 className="mb-8 text-3xl font-semibold text-[#14213d]">
           New Horizons Auction
         </h1>
-        <p className="mb-8 mt-1 text-slate-600">
-          {published.length} {published.length === 1 ? "item" : "items"} open
-          for bidding
-        </p>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {published.map((item) => (
-            <ItemCard key={item.id} item={item} />
-          ))}
-        </div>
+        <Suspense fallback={<GridSkeleton />}>
+          <ItemGrid />
+        </Suspense>
       </div>
     </main>
   );
