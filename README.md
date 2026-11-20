@@ -41,13 +41,15 @@ http://localhost:3000
 
 ### 5. Bidder accounts
 
-- `/register`: email/password registration with password confirmation, then return to the catalog. If email confirmation is required, the catalog shows an inbox reminder while the bidder remains signed out.
-- `/login`: email/password sign-in and confirmation-email resend. Successful sign-in, restored sessions on account pages, and valid confirmation links open the catalog.
+- `/register`: required full name, optional phone number, and email/password registration with password confirmation, then return to the catalog. Name and phone are saved in Supabase Auth user metadata as `full_name` and `phone`; a blank phone is omitted. If email confirmation is required, the catalog shows an inbox reminder while the bidder remains signed out.
+- `/login`: email/password sign-in, a Forgot password link, and confirmation-email resend. Successful sign-in, restored sessions on login/registration pages, and valid confirmation links open the catalog.
+- `/forgot-password`: request a password reset email.
+- `/reset-password`: choose and confirm a new password after following the recovery email link. Missing or expired links offer a way to request another link. Successful updates return to the catalog signed in.
 - `/`: the team’s sample catalog from `main`, available to browse while signed out. Catalog is always available in the header; signed-in bidders also see Log out at the top right.
 
-The account layout lives in `app/(auth)/layout.tsx`, so it only wraps `/login` and `/register`. Account form CSS is scoped to `.account-card` to preserve the catalog’s styling. The catalog currently uses the team’s sample rows, not live bidding data.
+The account layout lives in `app/(auth)/layout.tsx`, so it wraps login, registration, and password recovery pages. Account form CSS is scoped to `.account-card` to preserve the catalog’s styling. The catalog currently uses the team’s sample rows, not live bidding data.
 
-In the shared Supabase project, enable the Email authentication provider. Keep the project's email-confirmation policy; both confirmation-required and immediate-session registration are supported. Under Authentication → URL Configuration, add `http://localhost:3000/login` to the allowed redirect URLs for local confirmation emails. Use the same host consistently (localhost and 127.0.0.1 have separate sessions). If configuring a separate local Supabase instance, use its URL and publishable key instead.
+In the shared Supabase project, enable the Email authentication provider. Keep the project's email-confirmation policy; both confirmation-required and immediate-session registration are supported. Under Authentication → URL Configuration, add `http://localhost:3000/login` and `http://localhost:3000/reset-password` to the allowed redirect URLs for local confirmation and recovery emails. Add the corresponding URLs on your production domain before deployment. Keep the recovery email template linked to Supabase's `{{ .ConfirmationURL }}` so the reset link verifies the recovery token before returning to the app. Use the same host consistently (localhost and 127.0.0.1 have separate sessions). If configuring a separate local Supabase instance, use its URL and publishable key instead.
 
 The existing client in `supabase.ts` is shared by the account screens and future data requests. `useBidderAuth()` exposes `{ user, loading, sessionError, notice, setNotice, loggingOut, logout }` in client components beneath the root provider. Wait until `loading` is false before using `user`; `user === null` means signed out. The SDK restores browser sessions, refreshes tokens, and synchronizes auth events across tabs. Logout uses `scope: "local"` to end this browser's session while leaving other devices signed in.
 
@@ -62,7 +64,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Browser tests start an isolated dev server on `127.0.0.1:3100` with fictitious Supabase settings and intercepted Auth HTTP responses. They cover confirmation-required and immediate registration, validation, invalid credentials, unconfirmed email, confirmation resend and redirects, session persistence, cross-tab logout, local logout when server revocation fails, network errors, catalog redirects, catalog item preservation, and mobile layout. They do not create real accounts or prove that the shared Supabase project is configured correctly.
+Browser tests start an isolated dev server on `127.0.0.1:3100` with fictitious Supabase settings and intercepted Auth HTTP responses. They cover registration metadata with and without phone, required name and matching passwords, recovery email requests and retry, recovery sessions across reloads, password updates and retry, missing/expired links, sign-in redirects, and mobile layout. They do not create real accounts or prove that the shared Supabase project is configured correctly.
 
 ### 7. Before starting new work
 
