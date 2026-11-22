@@ -8,6 +8,10 @@ import { useBidderAuth } from "./bidder-auth-provider";
 export function SiteHeader() {
   const { user, loading, loggingOut, logout } = useBidderAuth();
   const pathname = usePathname();
+  const fullName = typeof user?.user_metadata.full_name === "string"
+    ? user.user_metadata.full_name.trim()
+    : "";
+  const accountName = fullName || user?.email || "Bidder";
   return (
     <header className="site-header">
       <div className="site-header-inner">
@@ -17,7 +21,13 @@ export function SiteHeader() {
         <nav aria-label="Account navigation">
           <Link href="/" className="nav-link" aria-current={pathname === "/" ? "page" : undefined}>Catalog</Link>
           {loading ? <span className="nav-status">Checking session…</span> : user ? (
-            <button type="button" className="nav-link nav-button" onClick={logout} disabled={loggingOut}>{loggingOut ? "Signing out…" : "Log out"}</button>
+            <>
+              <span className="nav-identity" title={user.email}>
+                <span className="nav-identity-label">Signed in as</span>
+                <span className="nav-identity-name">{accountName}</span>
+              </span>
+              <button type="button" className="nav-link nav-button" onClick={logout} disabled={loggingOut}>{loggingOut ? "Signing out…" : "Log out"}</button>
+            </>
           ) : (
             <><Link href="/login" className="nav-link" aria-current={pathname === "/login" ? "page" : undefined}>Sign in</Link><Link href="/register" className="nav-link" aria-current={pathname === "/register" ? "page" : undefined}>Register</Link></>
           )}
